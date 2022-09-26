@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private final String TAG = MainActivity.class.getSimpleName();
     private final String ACTION_USB_PERMISSION = "com.example.usbchecker.USB_PERMISSION";
     private Activity activity;
+    private TextView printerInfo;
 
     private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -44,11 +45,20 @@ public class MainActivity extends AppCompatActivity {
                         Log.i(TAG, "Usb connection permission accepted");
                         //permission granted
                         if (device != null) {
+                            if (printerInfo != null) {
+                                printerInfo.setText("USB Permission Granted. Device Data: " + device.toString());
+                            }
                             Log.i(TAG, "usb connection devices");
                         } else {
+                            if (printerInfo != null) {
+                                printerInfo.setText("USB Permission Granted. Device Data NOT FOUND");
+                            }
                             Log.i(TAG, "No usb connection devices");
                         }
                     } else {
+                        if (printerInfo != null) {
+                            printerInfo.setText("USB Permission NOT Granted.");
+                        }
                         Log.i(TAG, "Usb connection permission denied");
                     }
                 }
@@ -66,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
 
         Button button = (Button) findViewById(R.id.scanPrinters);
-        TextView printerInfo = (TextView) findViewById(R.id.printerInfo);
+        printerInfo = (TextView) findViewById(R.id.printerInfo);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
