@@ -82,32 +82,41 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 UsbDevice usbDevice = null;
                 Set<Map.Entry<String, UsbDevice>> deviceList = usbManager.getDeviceList().entrySet();
-                for (Map.Entry<String, UsbDevice> stringUsbDeviceEntry : deviceList) {
-                    if (stringUsbDeviceEntry.getValue().getVendorId() == 1273) {
-                        usbDevice = stringUsbDeviceEntry.getValue();
-                        break;
+                if (!deviceList.isEmpty()) {
+                    for (Map.Entry<String, UsbDevice> stringUsbDeviceEntry : deviceList) {
+                        if (stringUsbDeviceEntry.getValue() != null &&
+                                stringUsbDeviceEntry.getValue().getVendorId() == 1273) {
+                            usbDevice = stringUsbDeviceEntry.getValue();
+                            break;
+                        }
                     }
-                }
 
-                PendingIntent permissionIntent = PendingIntent.getBroadcast(activity, 0,
-                        new Intent(ACTION_USB_PERMISSION), 0);
-                activity.registerReceiver(mUsbReceiver, new IntentFilter(ACTION_USB_PERMISSION));
-                System.out.println("Build.VERSION.SDK_INT: " + Build.VERSION.SDK_INT);
-                while (true) {
-                    System.out.println(usbManager.hasPermission(usbDevice));
-                    if (!usbManager.hasPermission(usbDevice)) {
-                        usbManager.requestPermission(usbDevice, permissionIntent);
+                    if (usbDevice != null) {
+                        PendingIntent permissionIntent = PendingIntent.getBroadcast(activity, 0,
+                                new Intent(ACTION_USB_PERMISSION), 0);
+                        activity.registerReceiver(mUsbReceiver, new IntentFilter(ACTION_USB_PERMISSION));
+                        System.out.println("Build.VERSION.SDK_INT: " + Build.VERSION.SDK_INT);
+                        while (true) {
+                            System.out.println(usbManager.hasPermission(usbDevice));
+                            if (!usbManager.hasPermission(usbDevice)) {
+                                usbManager.requestPermission(usbDevice, permissionIntent);
+                            } else {
+                                break;
+                            }
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        Log.i(TAG, String.valueOf(usbDevice));
+                        System.out.println(usbManager.hasPermission(usbDevice));
                     } else {
-                        break;
+                        printerInfo.setText("No USB Devices Found");
                     }
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                } else {
+                    printerInfo.setText("No USB Devices Found");
                 }
-                Log.i(TAG, String.valueOf(usbDevice));
-                System.out.println(usbManager.hasPermission(usbDevice));
             }
         });
     }

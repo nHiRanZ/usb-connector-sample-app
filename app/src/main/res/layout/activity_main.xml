@@ -22,6 +22,7 @@
             android:text="Scan For Printers"/>
         <TextView
             android:id="@+id/printerInfo"
+            android:text="Scan to Find Devices"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>
